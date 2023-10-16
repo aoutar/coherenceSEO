@@ -117,35 +117,34 @@
         const form = document.getElementById("urlForm");
         const progressBar = document.getElementById("bar");
         const resultsDiv = document.getElementById("results");
-        const urls = document.querySelector('textarea[name="urls"]').value.split('\n');
-        const checkDelay = 2000;  
-        const totalCheckTime = urls.length * checkDelay;
         
         form.addEventListener("submit", function (event) {
             progressBar.style.width = "0%";
             progressBar.innerHTML = "0%";
             resultsDiv.innerHTML = "";
-    
-            setTimeout(() => {
-                let percent = 0;
-                const interval = setInterval(() => {
-                    percent += 1;
-                    if (percent <= 100) {
-                        progressBar.style.width = percent + "%";
-                        progressBar.innerHTML = percent + "%";
-                    } else {
-                        clearInterval(interval);
-                    }
-                }, totalCheckTime / 100);
-            }, 3000);
-    
+            
             event.preventDefault();
+            const formData = new FormData(form);
+            const urls = formData.get('urls').split('\n');
+            const checkDelay = 2000;
+            const totalCheckTime = urls.length * checkDelay;
+            let currentPercent = 0;
+    
+            const interval = setInterval(() => {
+                if (currentPercent <= 100) {
+                    progressBar.style.width = currentPercent + "%";
+                    progressBar.innerHTML = currentPercent + "%";
+                    currentPercent++;
+                }
+            }, totalCheckTime / 100);
+    
             fetch("/check", {
                 method: "POST",
-                body: new FormData(form),
+                body: formData,
             })
             .then(response => response.json())
             .then(data => {
+                clearInterval(interval); // Stop the progress bar update
                 progressBar.style.width = "100%";
                 progressBar.innerHTML = "100%";
     
@@ -159,18 +158,16 @@
                     }
                     resultsDiv.appendChild(resultElement);
                 });
-
-                // const downloadLink = document.createElement("a");
-                // downloadLink.href = data.download_link;
-                // downloadLink.textContent = "Download XLSX";
-                // resultsDiv.appendChild(downloadLink);
-
             })
             .catch(error => {
+                clearInterval(interval); // Stop the progress bar update
+                progressBar.style.width = "100%";
+                progressBar.innerHTML = "100%";
                 console.error("Error:", error);
             });
         });
     </script>
+    
     
 </body>
 </html>
