@@ -58,7 +58,7 @@ def check():
         response = requests.get(search_url)
         print("this is the response: "+response.text)
 
-        if 'Aucun document ne correspond aux termes de recherche spécifiés' in response.text:
+        if 'Aucun document ne correspond aux termes de recherche spécifiés' in response.text or 'Make sure all words are spelled correctly' in response.text:
             return f'{url} is not indexed.'
         else:
             return f'{url} is indexed.'
