@@ -56,6 +56,7 @@ def check():
     def check_indexing_status(url):
         search_url = f'https://www.google.fr/search?q=site:{url}'
         response = requests.get(search_url)
+        print("this is the response: "+response.text)
 
         if 'Aucun document ne correspond aux termes de recherche spécifiés' in response.text:
             return f'{url} is not indexed.'
