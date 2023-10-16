@@ -140,7 +140,7 @@ def check_backlinks(input_url):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
     # input_url = input("Enter a URL to check backlinks: ")
     # backlinks = check_backlinks(input_url)
 
