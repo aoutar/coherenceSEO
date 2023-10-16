@@ -54,7 +54,7 @@ def check():
     urls_to_check = request.form.get('urls').split('\n')
 
     def check_indexing_status(url):
-        search_url = f'https://www.google.com/search?q=site:{url}'
+        search_url = f'https://www.google.fr/search?q=site:{url}'
         response = requests.get(search_url)
 
         if 'Aucun document ne correspond aux termes de recherche spécifiés' in response.text:
