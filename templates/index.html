@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>URL Indexing Checker</title>
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #container {
+            text-align: center;
+            width: 50%; 
+            margin-top: 20px;
+        }
+
+        #indexingNote {
+            text-align: left;
+        }
+
+        #progress {
+            width: 100%;
+            background-color: #f1f1f1;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        #bar {
+            width: 0;
+            height: 30px;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+
+        #results {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .indexed {
+            color: green;
+        }
+
+        .not-indexed {
+            color: red;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Check Index</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/submit-urls">Submit URLs for Indexing</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+
+    <div id="container">
+        <h1>URL Indexing Checker</h1>
+        <form id="urlForm" method="POST" action="/check">
+            <textarea name="urls" rows="5" cols="40" placeholder="Enter URLs, one per line"></textarea>
+            <br>
+            <input type="submit" value="Check Indexing">
+        </form>
+        <div id="progress">
+            <div id="bar">0%</div>
+        </div>
+        <div id="results">
+            <!-- Results will be displayed here -->
+        </div>
+        <br>
+        <div id="indexingNote">
+            <h2>How to Index Your Website Easily</h2>
+            <p>Here are some steps to help you index your website on search engines:</p>
+            <ul>
+                <li>Submit your sitemap to search engines like Google and Bing.</li>
+                <li>Create a robots.txt file to specify which pages should be crawled.</li>
+                <li>Generate high-quality backlinks to your website.</li>
+                <li>Create valuable and relevant content that search engines will want to index.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap and jQuery scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    <script>
+        const form = document.getElementById("urlForm");
+        const progressBar = document.getElementById("bar");
+        const resultsDiv = document.getElementById("results");
+        const urls = document.querySelector('textarea[name="urls"]').value.split('\n');
+        const checkDelay = 2000;  
+        const totalCheckTime = urls.length * checkDelay;
+        
+        form.addEventListener("submit", function (event) {
+            progressBar.style.width = "0%";
+            progressBar.innerHTML = "0%";
+            resultsDiv.innerHTML = "";
+    
+            setTimeout(() => {
+                let percent = 0;
+                const interval = setInterval(() => {
+                    percent += 1;
+                    if (percent <= 100) {
+                        progressBar.style.width = percent + "%";
+                        progressBar.innerHTML = percent + "%";
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, totalCheckTime / 100);
+            }, 3000);
+    
+            event.preventDefault();
+            fetch("/check", {
+                method: "POST",
+                body: new FormData(form),
+            })
+            .then(response => response.json())
+            .then(data => {
+                progressBar.style.width = "100%";
+                progressBar.innerHTML = "100%";
+    
+                data.results.forEach(result => {
+                    const resultElement = document.createElement("p");
+                    resultElement.textContent = result;
+                    if (resultElement.textContent.includes("is indexed")) {
+                        resultElement.style.color = "green";
+                    } else {
+                        resultElement.style.color = "red";
+                    }
+                    resultsDiv.appendChild(resultElement);
+                });
+
+                // const downloadLink = document.createElement("a");
+                // downloadLink.href = data.download_link;
+                // downloadLink.textContent = "Download XLSX";
+                // resultsDiv.appendChild(downloadLink);
+
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+    
+</body>
+</html>
