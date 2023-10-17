@@ -184,26 +184,6 @@
         });
 
 
-
-    function toggleDarkMode() {
-        const body = document.body;
-        body.classList.toggle('dark-mode'); // Toggle the 'dark-mode' class
-        const darkModeEnabled = body.classList.contains('dark-mode');
-        localStorage.setItem('darkMode', darkModeEnabled); // Store user preference
-    }
-
-    // Check if dark mode preference is saved in localStorage
-    const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
-
-    // Set initial mode based on user preference
-    if (darkModeEnabled) {
-        document.body.classList.add('dark-mode');
-    }
-
-    // Add an event listener to the toggle button
-    document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
-
-
         
         form.addEventListener("submit", function (event) {
             progressBar.style.width = "0%";
