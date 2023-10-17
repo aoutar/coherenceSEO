@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from werkzeug.utils import secure_filename
 import requests
 import time
 import json
@@ -53,6 +54,11 @@ def index():
 def check():
     urls_to_check = request.form.get('urls').split('\n')
 
+    warning = None
+    if len(urls_to_check) > 15:
+        warning = 'You can only check up to 15 URLs. The excess URLs will be ignored.'
+
+
     def check_indexing_status(url):
         search_url = f'https://www.google.fr/search?q=site:{url}'
         response = requests.get(search_url)
@@ -64,14 +70,22 @@ def check():
             return f'{url} is indexed.'
 
     results = []
-    for url in urls_to_check:
+    for i, url in enumerate(urls_to_check):
+        if i >= 15:
+            break
         status = check_indexing_status(url.strip())
         results.append((status))
         time.sleep(3)
     
+    response_data = {
+        'results': results,
+        'warning': warning  
+    }
+
     #xlsx_file = export_results_to_xlsx(results)
 
-    return jsonify(results=results)
+    return jsonify(response_data)
+
 
 @app.route('/submit-urls', methods=['GET','POST'])
 def submit_to_index():

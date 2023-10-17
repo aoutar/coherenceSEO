@@ -88,6 +88,9 @@
             <br>
             <input type="submit" value="Check Indexing">
         </form>
+        <!-- Warning section -->
+        <div id="warning" style="color: red; font-weight: bold; display: none;"></div>
+        <br>
         <div id="progress">
             <div id="bar">0%</div>
         </div>
@@ -117,15 +120,24 @@
         const form = document.getElementById("urlForm");
         const progressBar = document.getElementById("bar");
         const resultsDiv = document.getElementById("results");
+        const warningDiv = document.getElementById("warning");
         
         form.addEventListener("submit", function (event) {
             progressBar.style.width = "0%";
             progressBar.innerHTML = "0%";
             resultsDiv.innerHTML = "";
+            warningDiv.style.display = "none";
             
             event.preventDefault();
             const formData = new FormData(form);
             const urls = formData.get('urls').split('\n');
+
+            // if (urls.length > 15) {
+            //     warningDiv.style.display = "block";
+            //     warningDiv.textContent = "You can submit up to 15 URLs at a time.";
+            //     return; 
+            // }
+
             const checkDelay = 2000;
             const totalCheckTime = urls.length * checkDelay;
             let currentPercent = 0;
@@ -158,6 +170,11 @@
                     }
                     resultsDiv.appendChild(resultElement);
                 });
+
+                if (data.warning) {
+                    warningDiv.style.display = "block";
+                    warningDiv.textContent = data.warning;
+                }
             })
             .catch(error => {
                 clearInterval(interval); // Stop the progress bar update
