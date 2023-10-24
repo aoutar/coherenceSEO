@@ -52,7 +52,13 @@ def index():
 
 @app.route('/check', methods=['POST'])
 def check():
-    urls_to_check = request.form.get('urls').split('\n')
+    
+    input_urls = request.form.get('urls')
+
+    #urls_to_check = request.form.get('urls').split('\n')
+    
+    urls_to_check = [url.strip() for url in input_urls.split('\n') if url.strip()]
+
 
     warning = None
     if len(urls_to_check) > 15:
@@ -73,7 +79,7 @@ def check():
     for i, url in enumerate(urls_to_check):
         if i >= 15:
             break
-        status = check_indexing_status(url.strip())
+        status = check_indexing_status(url)
         results.append((status))
         time.sleep(3)
     
