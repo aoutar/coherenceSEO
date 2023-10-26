@@ -19,7 +19,7 @@
         }
 
         .dark-mode {
-            background-color: black;
+            background-color: #333;
             color: white;
         }
 
@@ -64,6 +64,14 @@
             margin-bottom: 30px;
         }
 
+        #progressDark {
+            width: 100%;
+            background-color: #4e4e4e;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        
+
         #bar {
             width: 0;
             height: 30px;
@@ -75,6 +83,9 @@
 
         #results {
             font-family: 'Montserrat', sans-serif;
+            display: grid;
+            align-items: center;
+            justify-content: center;
         }
 
         .indexed {
@@ -95,7 +106,22 @@
             resize: vertical; 
             border: 1px solid #ccc;
             border-radius: 5px;
-}
+        }
+
+        input{
+            display: inline-block;
+            outline: none;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 14px 24px;
+            border: none;
+            transition: box-shadow 0.2s ease 0s, -ms-transform 0.1s ease 0s, -webkit-transform 0.1s ease 0s, transform 0.1s ease 0s;
+            background: linear-gradient(to right, rgb(230, 30, 77) 0%, rgb(227, 28, 95) 50%, rgb(215, 4, 102) 100%);
+            color: #fff;   
+        }
 
     </style>
 </head>
@@ -129,7 +155,7 @@
         <h1>URL Indexing Checker</h1>
         <form id="urlForm" method="POST" action="/check">
             <p style="color: red; font-weight: bold;">Maximum of 15 URLs per submission.</p> 
-            <textarea name="urls" rows="5" cols="40" placeholder="Enter URLs, one per line"></textarea>
+            <textarea name="urls"  rows="5" cols="40" placeholder="Enter URLs, one per line"></textarea>
             <br>
             <input type="submit" value="Check Indexing">
         </form>
@@ -171,13 +197,28 @@
         const modeToggle = document.getElementById("mode-toggle");
         const moonIcon = document.getElementById("moon-icon");
         const sunIcon = document.getElementById("sun-icon");
+        const navigationMenu = document.querySelector("nav");
+        const textArea = document.querySelector("textarea");
+        const progressBarStyle = document.getElementById("progress");
+        const classesToAdd =['navbar','navbar-expand-lg','navbar-dark','bg-dark']
+
+
 
         modeToggle.addEventListener("click", () => {
+            
             document.body.classList.toggle("dark-mode");
                 if (document.body.classList.contains("dark-mode")) {
                     moonIcon.style.display = "inline-block";
                     sunIcon.style.display = "none";
+                    navigationMenu.classList.remove("navbar", "navbar-expand-lg", "navbar-light", "bg-light");
+                    navigationMenu.classList.add("navbar", "navbar-expand-lg", "navbar-dark", "bg-dark");
+                    textArea.classList.add("dark-mode");
+                    progressBarStyle.style.backgroundColor="#4e4e4e";
                 } else {
+                    navigationMenu.classList.remove("navbar", "navbar-expand-lg", "navbar-dark", "bg-dark");
+                    navigationMenu.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light");
+                    progressBarStyle.style.backgroundColor="#f1f1f1";
+                    textArea.classList.remove("dark-mode");
                     moonIcon.style.display = "none";
                     sunIcon.style.display = "inline-block";
                 }
@@ -190,10 +231,15 @@
             progressBar.innerHTML = "0%";
             resultsDiv.innerHTML = "";
             warningDiv.style.display = "none";
-            
+
+            const indexedTable = createResultTable("Indexed URLs");
+            const notIndexedTable = createResultTable("Not Indexed URLs");
+
             event.preventDefault();
             const formData = new FormData(form);
             const urls = formData.get('urls').split('\n');
+
+
 
             // if (urls.length > 15) {
             //     warningDiv.style.display = "block";
@@ -222,17 +268,28 @@
                 clearInterval(interval); // Stop the progress bar update
                 progressBar.style.width = "100%";
                 progressBar.innerHTML = "100%";
-    
+
+
                 data.results.forEach(result => {
                     const resultElement = document.createElement("p");
                     resultElement.textContent = result;
-                    if (resultElement.textContent.includes("is indexed")) {
-                        resultElement.style.color = "green";
+                    const [url, state] = resultElement.textContent.split(" is ");
+
+                    const table = state === "indexed." ? indexedTable : notIndexedTable;
+                    const row = table.insertRow();
+                    const urlCell = row.insertCell(0);
+                    urlCell.textContent = url;
+                    //const stateCell = row.insertCell(1);
+                    //stateCell.textContent = state;
+                    if (state === "indexed.") {
+                        urlCell.style.color = "green";
                     } else {
-                        resultElement.style.color = "red";
+                        urlCell.style.color = "red";
                     }
-                    resultsDiv.appendChild(resultElement);
                 });
+
+                resultsDiv.appendChild(indexedTable);
+                resultsDiv.appendChild(notIndexedTable);
 
                 if (data.warning) {
                     warningDiv.style.display = "block";
@@ -246,6 +303,18 @@
                 console.error("Error:", error);
             });
         });
+
+        function createResultTable(title) {
+            const table = document.createElement("table");
+            const headerRow = table.insertRow();
+            const headerCell = headerRow.insertCell(0);
+            headerCell.textContent = title;
+            headerCell.colSpan = 2;
+            headerCell.style.fontWeight = "bold";
+            return table;
+        }
+
+        
     </script>
     
     
