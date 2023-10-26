@@ -88,6 +88,10 @@
             justify-content: center;
         }
 
+        #results table{
+            margin-bottom: 3Opx;
+        }
+
         .indexed {
             color: green;
         }
@@ -308,6 +312,7 @@
             const table = document.createElement("table");
             const headerRow = table.insertRow();
             const headerCell = headerRow.insertCell(0);
+            table.style.marginBottom= "30px";
             headerCell.textContent = title;
             headerCell.colSpan = 2;
             headerCell.style.fontWeight = "bold";
