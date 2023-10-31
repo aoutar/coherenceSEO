@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <title>URL Indexing Checker</title>
     <style>
         body {
@@ -132,8 +135,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Home</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+        data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+        aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -142,7 +146,11 @@
                     <a class="nav-link" href="#">Check Index</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/submit-urls">Submit URLs for Indexing</a>
+                    <a class="nav-link" href="/submit-urls">Submit URLs for
+                    Indexing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sitemap-extractor">Extract URLs from Sitemap</a>
                 </li>
                 
             </ul>
@@ -158,13 +166,16 @@
     <div id="container">
         <h1>URL Indexing Checker</h1>
         <form id="urlForm" method="POST" action="/check">
-            <p style="color: red; font-weight: bold;">Maximum of 15 URLs per submission.</p> 
-            <textarea name="urls"  rows="5" cols="40" placeholder="Enter URLs, one per line"></textarea>
+            <p style="color: red; font-weight: bold;">Maximum of 15 URLs per
+            submission.</p> 
+            <textarea name="urls"  rows="5" cols="40" placeholder="Enter URLs,
+            one per line"></textarea>
             <br>
             <input type="submit" value="Check Indexing">
         </form>
         <!-- Warning section -->
-        <div id="warning" style="color: red; font-weight: bold; display: none;"></div>
+        <div id="warning" style="color: red; font-weight: bold; display:
+        none;"></div>
         <br>
         <div id="progress">
             <div id="bar">0%</div>
@@ -175,12 +186,16 @@
         <br>
         <div id="indexingNote">
             <h2>How to Index Your Website Easily</h2>
-            <p>Here are some steps to help you index your website on search engines:</p>
+            <p>Here are some steps to help you index your website on search
+            engines:</p>
             <ul>
-                <li>Submit your sitemap to search engines like Google and Bing.</li>
-                <li>Create a robots.txt file to specify which pages should be crawled.</li>
+                <li>Submit your sitemap to search engines like Google and
+                Bing.</li>
+                <li>Create a robots.txt file to specify which pages should be
+                crawled.</li>
                 <li>Generate high-quality backlinks to your website.</li>
-                <li>Create valuable and relevant content that search engines will want to index.</li>
+                <li>Create valuable and relevant content that search engines
+                will want to index.</li>
             </ul>
         </div>
     </div>
@@ -245,10 +260,9 @@
 
 
 
-            // if (urls.length > 15) {
-            //     warningDiv.style.display = "block";
-            //     warningDiv.textContent = "You can submit up to 15 URLs at a time.";
-            //     return; 
+            // if (urls.length > 15) { warningDiv.style.display = "block";
+            //     warningDiv.textContent = "You can submit up to 15 URLs at a
+            //     time."; return; 
             // }
 
             const checkDelay = 2000;
@@ -283,8 +297,8 @@
                     const row = table.insertRow();
                     const urlCell = row.insertCell(0);
                     urlCell.textContent = url;
-                    //const stateCell = row.insertCell(1);
-                    //stateCell.textContent = state;
+                    //const stateCell = row.insertCell(1); stateCell.textContent
+                    //= state;
                     if (state === "indexed.") {
                         urlCell.style.color = "green";
                     } else {
@@ -319,7 +333,6 @@
             return table;
         }
 
-        
     </script>
     
     

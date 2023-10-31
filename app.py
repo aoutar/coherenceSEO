@@ -8,6 +8,7 @@ from google.oauth2 import service_account
 import pandas as pd
 from openpyxl import Workbook
 from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
 
 
 
@@ -127,6 +128,27 @@ def submit_to_index():
 
 
     return jsonify(error="An unknown error occurred.")
+
+@app.route('/sitemap-extractor', methods=['GET', 'POST'])
+def sitemap_extractor():
+    if request.method == 'POST':
+        sitemap_url = request.form.get('sitemap_url')
+        urls = extract_urls_from_sitemap(sitemap_url)
+        return jsonify({'urls': urls})
+    return render_template('sitemap-extractor.html')
+
+def extract_urls_from_sitemap(sitemap_url):
+    try:
+        response = requests.get(sitemap_url)
+        if response.status_code == 200:
+            root = ET.fromstring(response.text)
+            urls = [child.text for child in root.iter("{http://www.sitemaps.org/schemas/sitemap/0.9}loc")]
+            return urls
+    except Exception as e:
+        return []
+    return []
+
+
 
 
 def export_results_to_xlsx(results):

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <title>Sitemap URL Extrator</title>
+  <style>
+    body {
+        min-height: 100vh;
+        margin: 0;
+        font-family: 'Montserrat', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #fff;
+    }
+
+#container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 20px;
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #e42727;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.submit-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+#results {
+    margin-top: 20px;
+    font-family: 'Montserrat', sans-serif;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+
+.url-list {
+    list-style: none; /* Remove dots */
+    padding: 0;
+    margin: 0;
+}
+
+.url-list li {
+    margin-bottom: 10px;
+}
+
+.copy-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.copy-button:hover {
+    background-color: #0056b3;
+}
+
+
+  </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+        data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+        aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Check Index</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/submit-urls">Submit URLs for
+                    Indexing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sitemap-extractor">Extract URLs
+                    from Sitemap</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+    <div id="container">
+        <h1 class="title">Sitemap URL Extractor</h1>
+        <form id="sitemapForm" method="POST" action="/sitemap-extractor">
+            <input type="text" name="sitemap_url" class="input-field"
+            cplaceholder="Enter Sitemap URL">
+            <button type="submit" class="submit-button">Extract URLs</button>
+        </form>
+        <button id="copyButton" class="copy-button">Copy</button>
+        <div id="results">
+            <ul id="urlList" class="url-list">
+                <!-- URLs will be added dynamically here -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    <script>
+// JavaScript code
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById("sitemapForm");
+    const resultsDiv = document.getElementById("results");
+    const copyButton = document.getElementById("copyButton");
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+
+        fetch("/sitemap-extractor", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            const urls = data.urls;
+            resultsDiv.innerHTML = '';
+            if (urls.length > 0) {
+                const ul = document.createElement('ul');
+                ul.className = "url-list"; // Add the URL list class
+                urls.forEach(url => {
+                    const li = document.createElement('li');
+                    li.textContent = url;
+                    ul.appendChild(li);
+                });
+                resultsDiv.appendChild(ul);
+
+                // Enable the copy button
+                copyButton.style.display = 'block';
+            } else {
+                resultsDiv.textContent = 'No URLs found in the sitemap.';
+                // Disable the copy button if no URLs found
+                copyButton.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    });
+
+    copyButton.addEventListener('click', function () {
+        const urlList = document.querySelector('.url-list');
+        const urls = Array.from(urlList.querySelectorAll('li')).map(li => li.textContent).join('\n');
+        copyToClipboard(urls);
+    });
+
+    function copyToClipboard(text) {
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = text;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempTextArea);
+        alert('List copied to clipboard!');
+    }
+});
+
+    </script>
+    
+</body>
+</html>
