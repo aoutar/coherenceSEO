@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 
 app = Flask(__name__)
 
+
 ALLOWED_EXTENSIONS = {'json'}
 
 # Your existing code for indexing URLs
